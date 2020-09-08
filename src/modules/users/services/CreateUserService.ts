@@ -1,4 +1,5 @@
 import { inject, injectable } from 'tsyringe';
+import AppError from '../../../errors/AppError';
 import User from '../entities/User';
 import IUsersRepository from '../repositoriesInterface/IUsersRepository';
 
@@ -16,7 +17,11 @@ class CreateUserService {
   ) {}
 
   public async execute({ name, email, password }: IRequest): Promise<User> {
-    // TODO: check if user exists
+    const userExists = await this.usersRepository.findByEmail(email);
+
+    if (userExists) {
+      throw new AppError('Email adress already used');
+    }
 
     // TODO: generateHash
 
